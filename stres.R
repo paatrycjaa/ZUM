@@ -79,3 +79,37 @@ df_values
 
 select_features(data_filtered_2000,df_values, 3, "label")
 
+#Load data for heavy drinking detection
+#jesli odczyt z telefonu jest pomiedzy odczytami i i i+1 tac, to label przyjmuje wartosc tac i/ timestamp w milisekundach w pid? w target w sek?
+#https://github.com/p-nath/detection_heavy__drinking_episodes/blob/master/report.pdf
+
+tac_reading_BK7610 = read.table("clean_tac/BK7610_clean_TAC.csv", sep = ",", header = TRUE)
+tac_reading_BK7610 = tac_reading_BK7610 %>% mutate(label = case_when( TAC_Reading >= 0.08 ~ 1, TAC_Reading < 0.08 ~ 0))
+View(tac_reading_BK7610)
+
+df_drinking = read.table("all_accelerometer_data_pids_13.csv", sep = ",", header = TRUE)
+df_drinking_BK7610 = df_drinking %>% filter(pid == "BK7610" & time > 0) %>% arrange(time)
+df_drinking_BK7610 = df_drinking_BK7610 %>% mutate(label = 2)
+
+
+## add coressponding tac label to features
+tt = 1
+for( i in 1:dim(df_drinking_BK7610)[1]){
+  completed = TRUE
+  while(completed){
+    if(tt > dim(tac_reading_BK7610)[1]){
+      break
+    }
+    #print(tac_reading_BK7610$time[tt])
+    #print( df_drinking_BK7610$time[i] / 1000)
+    if( df_drinking_BK7610$time[i] / 1000 > tac_reading_BK7610$timestamp[tt] & df_drinking_BK7610$time[i] / 1000 < tac_reading_BK7610$timestamp[tt + 1]){
+      df_drinking_BK7610$label[i] = tac_reading_BK7610$label[tt]
+      completed = FALSE
+    }
+    else{
+      tt = tt + 1
+    }
+  }
+}
+
+View(df_drinking_BK7610)
