@@ -1,6 +1,7 @@
 library(tidyverse)
 library(reticulate)
 library(randomForest)
+library(caret)
 
 
 ## Load WESAD data for only one participant (S10) from pickle file
@@ -113,3 +114,31 @@ for( i in 1:dim(df_drinking_BK7610)[1]){
 }
 
 View(df_drinking_BK7610)
+
+
+## Energy data
+
+df_energy = read.csv("energydata_complete.csv", sep =",", header = TRUE)
+View(df_energy)
+
+df_energy_filtered = select(sample_n(df_energy,10000), -date)
+df_values = features_importance(df_energy_filtered,"Appliances" )
+
+select_features(df_energy_filtered,df_values, 3, "Appliances")
+
+
+## Scores
+
+rf_classifier = randomForest(label ~ ., data = data_filtered_2000)
+
+#test data
+test_data = sample_n(data_filtered,200)
+test_data = select(test_data, -time)
+test_data$label = factor(test_data$label)
+
+prediction = predict(rf_classifier, test_data)
+prediction
+
+cm <- confusionMatrix(prediction, test_data$label)
+cm
+
