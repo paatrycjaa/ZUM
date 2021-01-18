@@ -62,23 +62,19 @@ test_percentage = 0.2
 test_dates = sample(unique(dates), length(unique(dates))*test_percentage)
 
 get_day <- function(values){
-  #print(values[1])
-  #print(values[length(values)])
   date_start_str = data.frame(strsplit(values[1], ' '))[[1,1]]
   date_end_str = data.frame(strsplit(values[length(values)], ' '))[[1,1]]
   date_start = chron(date_start_str, format=c('y-m-d'))
   date_end = chron(date_end_str, format=c('y-m-d'))
-  #print(date_start)
-  #print(date_end)
   if (date_start == date_end){
     return(as.numeric(date_start))
   }
   return(0)
 }
 
-functions = list(mean=mean, min=min, max=max, sd=sd, q=quantile, sum=sum, date=get_date)
+functions = list(mean=mean, min=min, max=max, sd=sd, q=quantile, sum=sum, day=get_day)
 
-aggregations = list(Appliances=c("sum", "mean"),
+aggregations = list(Appliances=c("sum", "mean", "max"),
                     lights=c("mean", "sd", "q"), 
                     T1 = c("mean", "sd", "q"),
                     T2 = c("mean", "sd", "q"),
@@ -106,20 +102,43 @@ aggregations = list(Appliances=c("sum", "mean"),
                     Tdewpoint=c("mean", "sd", "q"),
                     rv1=c("mean", "sd", "q"),
                     rv2=c("mean", "sd", "q"),
-                    date=c("date")
+                    date=c("day")
                     )
 # aggregations = list(date=c("date"))
 aggregated_df3 = vectorize(df_energy, 3, aggregations, functions)
-write.csv(aggregated_df3, "energy_win3.csv")
+aggregated_df3_test = aggregated_df3[which(aggregated_df3$`date day` %in% test_dates),]
+aggregated_df3_train = aggregated_df3[which(!(aggregated_df3$`date day` %in% test_dates)),]
+write.csv(aggregated_df3_train, "aggregated_df3_train.csv")
+write.csv(aggregated_df3_test, "aggregated_df3_test.csv")
+
 aggregated_df6 = vectorize(df_energy, 6, aggregations, functions)
-write.csv(aggregated_df6, "energy_win6.csv")
+aggregated_df6_test = aggregated_df6[which(aggregated_df6$`date day` %in% test_dates),]
+aggregated_df6_train = aggregated_df6[which(!(aggregated_df6$`date day` %in% test_dates)),]
+write.csv(aggregated_df6_train, "aggregated_df6_train.csv")
+write.csv(aggregated_df6_test, "aggregated_df6_test.csv")
+
 aggregated_df12 = vectorize(df_energy, 12, aggregations, functions)
-write.csv(aggregated_df12, "energy_win12.csv")
+aggregated_df12_test = aggregated_df12[which(aggregated_df12$`date day` %in% test_dates),]
+aggregated_df12_train = aggregated_df12[which(!(aggregated_df12$`date day` %in% test_dates)),]
+write.csv(aggregated_df12_train, "aggregated_df12_train.csv")
+write.csv(aggregated_df12_test, "aggregated_df12_test.csv")
 
 aggregated_df24 = vectorize(df_energy, 24, aggregations, functions)
-aggregated_df24_test = aggregated_df24[which(aggregated_df24$`date date` %in% test_dates),]
-aggregated_df24_train = aggregated_df24[which(!(aggregated_df24$`date date` %in% test_dates)),]
-write.csv(aggregated_df24, "energy_win24.csv")
+aggregated_df24_test = aggregated_df24[which(aggregated_df24$`date day` %in% test_dates),]
+aggregated_df24_train = aggregated_df24[which(!(aggregated_df24$`date day` %in% test_dates)),]
+write.csv(aggregated_df24_train, "energy_win24_train.csv")
+write.csv(aggregated_df24_test, "energy_win24_test.csv")
+
+
+
+aggregations = list(Appliances=c("sum", "mean", "max"),
+                    date=c("day")
+)
+real_values = vectorize(df_energy, 144, aggregations, functions)
+real_values_test = real_values[which(real_values$`date day` %in% test_dates),]
+real_values_train = real_values[which(!(real_values$`date day` %in% test_dates)),]
+write.csv(real_values_test, "real_values_train.csv")
+write.csv(real_values_train, "real_values_test.csv")
 
 
 
