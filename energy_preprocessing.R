@@ -1,6 +1,7 @@
 library(tidyverse)
 library(randomForest)
 library(caret)
+library(chron)
 source ("vectorize.R") 
 
 features_importance <- function(df, label){
@@ -19,7 +20,8 @@ features_importance <- function(df, label){
 
 
 df_energy = read.csv("energydata_complete.csv", sep =",", header = TRUE)
-
+# cropping out to full days
+df_energy = df_energy[43:19626,]
 df_energy_filtered = select(sample_n(df_energy,nrow(df_energy)), -date)
 df_energy_scaled = data.frame(scale(df_energy_filtered))
 df_values = features_importance(df_energy_filtered,"Appliances" )
@@ -54,7 +56,27 @@ df_values = features_importance(df_energy_filtered,"Appliances" )
 
 # VECTORIZATION
 
-functions = list(mean=mean, min=min, max=max, sd=sd, q=quantile, sum=sum)
+dates = t(as.data.frame(strsplit(df_energy$date, ' ')))
+dates = as.numeric(chron(dates[,1], format=c('y-m-d')))
+test_percentage = 0.2
+test_dates = sample(unique(dates), length(unique(dates))*test_percentage)
+
+get_day <- function(values){
+  #print(values[1])
+  #print(values[length(values)])
+  date_start_str = data.frame(strsplit(values[1], ' '))[[1,1]]
+  date_end_str = data.frame(strsplit(values[length(values)], ' '))[[1,1]]
+  date_start = chron(date_start_str, format=c('y-m-d'))
+  date_end = chron(date_end_str, format=c('y-m-d'))
+  #print(date_start)
+  #print(date_end)
+  if (date_start == date_end){
+    return(as.numeric(date_start))
+  }
+  return(0)
+}
+
+functions = list(mean=mean, min=min, max=max, sd=sd, q=quantile, sum=sum, date=get_date)
 
 aggregations = list(Appliances=c("sum", "mean"),
                     lights=c("mean", "sd", "q"), 
@@ -83,15 +105,22 @@ aggregations = list(Appliances=c("sum", "mean"),
                     Visibility=c("mean", "sd", "q"),
                     Tdewpoint=c("mean", "sd", "q"),
                     rv1=c("mean", "sd", "q"),
-                    rv2=c("mean", "sd", "q")
+                    rv2=c("mean", "sd", "q"),
+                    date=c("date")
                     )
-aggregated_df3 = vectorize(df_energy_filtered, 3, aggregations, functions)
+# aggregations = list(date=c("date"))
+aggregated_df3 = vectorize(df_energy, 3, aggregations, functions)
 write.csv(aggregated_df3, "energy_win3.csv")
-aggregated_df6 = vectorize(df_energy_filtered, 6, aggregations, functions)
+aggregated_df6 = vectorize(df_energy, 6, aggregations, functions)
 write.csv(aggregated_df6, "energy_win6.csv")
-aggregated_df12 = vectorize(df_energy_filtered, 12, aggregations, functions)
+aggregated_df12 = vectorize(df_energy, 12, aggregations, functions)
 write.csv(aggregated_df12, "energy_win12.csv")
-aggregated_df24 = vectorize(df_energy_filtered, 24, aggregations, functions)
+
+aggregated_df24 = vectorize(df_energy, 24, aggregations, functions)
+aggregated_df24_test = aggregated_df24[which(aggregated_df24$`date date` %in% test_dates),]
+aggregated_df24_train = aggregated_df24[which(!(aggregated_df24$`date date` %in% test_dates)),]
 write.csv(aggregated_df24, "energy_win24.csv")
+
+
 
 
