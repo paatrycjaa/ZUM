@@ -3,6 +3,8 @@ library(caret)
 library(tidyverse)
 library(Metrics)
 library(e1071)
+library(mlbench)
+
 
 if(!exists("vectorize", mode="function")) source("vectorize.R")
 
@@ -45,7 +47,31 @@ importance_mean = features_importance(train_df, "label")
 importance_mean
 
 df_stress_filtered = select_features(train_df,importance_mean, 5, "label")
+###############
+#k-fold cross validation
 
+customRF <- list(type = "Classification", library = "randomForest", loop = NULL)
+customRF$parameters <- data.frame(parameter = c("mtry", "ntree"), class = rep("numeric", 2), label = c("mtry", "ntree"))
+customRF$grid <- function(x, y, len = NULL, search = "grid") {}
+customRF$fit <- function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+  randomForest(x, y, mtry = param$mtry, ntree=param$ntree, ...)
+}
+customRF$predict <- function(modelFit, newdata, preProc = NULL, submodels = NULL)
+  predict(modelFit, newdata)
+customRF$prob <- function(modelFit, newdata, preProc = NULL, submodels = NULL)
+  predict(modelFit, newdata, type = "prob")
+customRF$sort <- function(x) x[order(x[,1]),]
+customRF$levels <- function(x) x$classes
+
+control <- trainControl(method="cv", number=5)
+tunegrid <- expand.grid(.mtry=c(1:15), .ntree=c(50,100,200,300))
+seed <- 7
+metric <- c("Accuracy")
+set.seed(seed)
+custom <- train(label~., data=train_df, method=customRF, metric=metric, tuneGrid=tunegrid, trControl=control)
+summary(custom)
+plot(custom)
+custom
 #############################################
 #Random Forest
 rf_classifier = randomForest(label ~ ., data = train_df)
@@ -58,10 +84,14 @@ cm <- confusionMatrix(prediction, train_df$label)
 cm
 
 
+#mtry = 1; ntree= 300;
 #############################################
 #SVM
+## 10-fold cross validation
+obj = tune.svm(label ~ ., data=train_df, kernel='radial',type="C-classification", cost=seq(from=0.1, to=1,by=0.1), gamma = seq(from=0.1, to =1, by=0.1))
+obj
 
-svm_classifier = svm(label ~ ., data=train_df, kernel='radial', type="C-classification", gamma =0.1, cost=10 )
+svm_classifier = svm(label ~ ., data=train_df, kernel='radial', type="C-classification", gamma =0.3, cost=0.9 )
 svm_classifier$SV 
 
 plot(svm_classifier, train_df, eda.sd ~ X.sd)
@@ -72,3 +102,5 @@ prediction
 
 cm <- confusionMatrix(prediction, train_df$label)
 cm
+
+
