@@ -1,0 +1,12 @@
+Package: tsvectorization
+Type: Package
+Title: Time Series Vectorization
+Version: 0.1.0
+Author: Patrycja Cieplicka, Pawel Zakieta 
+Maintainer: The package maintainer <pawelzakieta97@gmail.com>
+Description: This package delivers a method for processing a time series dataset. Signals in a form of time series often require additioanl processing in order tobe used with traditional classifying/regression tools. This package allows for applying standard aggregation functions such as mean, standard deviation etc. as well as user-defined functions for more control, e.g. for acquiring frequency data.
+License:
+Encoding: UTF-8
+LazyData: true
+Imports: zoo
+RoxygenNote: 7.1.1

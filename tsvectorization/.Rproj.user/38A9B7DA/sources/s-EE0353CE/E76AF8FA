@@ -1,0 +1,32 @@
+{
+    "id": "E76AF8FA",
+    "path": null,
+    "project_path": null,
+    "type": "r_dataframe",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1611520209944.0,
+    "source_on_save": false,
+    "relative_order": 11,
+    "properties": {
+        "expression": "importance_mean",
+        "caption": "importance_mean",
+        "totalObservations": 18,
+        "displayedObservations": 18,
+        "variables": 2,
+        "cacheKey": "BB458BF5",
+        "object": "importance_mean",
+        "environment": "",
+        "contentUrl": "grid_resource/gridviewer.html?env=&obj=importance_mean&cache_key=BB458BF5&max_cols=50",
+        "preview": 0
+    },
+    "folds": "",
+    "lastKnownWriteTime": 2319480617856,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1611520209944,
+    "read_only": false,
+    "read_only_alternatives": []
+}

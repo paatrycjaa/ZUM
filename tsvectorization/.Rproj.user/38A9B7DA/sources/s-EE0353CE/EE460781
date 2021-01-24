@@ -1,0 +1,24 @@
+{
+    "id": "EE460781",
+    "path": "C:/studia/ZUM/classifying/time-series-vectorization/drinking_preprocessing.R",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1611523865940.0,
+    "source_on_save": false,
+    "relative_order": 14,
+    "properties": {
+        "cursorPosition": "64,77",
+        "scrollLine": "40"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1611523956,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1611523956825,
+    "read_only": false,
+    "read_only_alternatives": []
+}

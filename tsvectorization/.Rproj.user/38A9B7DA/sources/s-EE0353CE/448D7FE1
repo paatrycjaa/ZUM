@@ -1,0 +1,32 @@
+{
+    "id": "448D7FE1",
+    "path": null,
+    "project_path": null,
+    "type": "r_dataframe",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1611508285692.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "expression": "df_drink_test",
+        "caption": "df_drink_test",
+        "totalObservations": "67459",
+        "displayedObservations": "67459",
+        "variables": "24",
+        "cacheKey": "37FA08CC",
+        "object": "df_drink_test",
+        "environment": "",
+        "contentUrl": "grid_resource/gridviewer.html?env=&obj=df_drink_test&cache_key=37FA08CC&max_cols=50",
+        "preview": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1611504758,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1611508285692,
+    "read_only": false,
+    "read_only_alternatives": []
+}

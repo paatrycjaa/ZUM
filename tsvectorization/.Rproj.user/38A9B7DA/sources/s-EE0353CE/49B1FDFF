@@ -1,0 +1,26 @@
+{
+    "id": "49B1FDFF",
+    "path": "C:/studia/ZUM/package2/tsvectorization/man/vectorize.Rd",
+    "project_path": "man/vectorize.Rd",
+    "type": "r_doc",
+    "hash": "939520156",
+    "contents": "",
+    "dirty": false,
+    "created": 1611486289159.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "cursorPosition": "0,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1611505816,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1611505816,
+    "read_only": true,
+    "read_only_alternatives": [
+        "R/vectorize.R"
+    ]
+}
