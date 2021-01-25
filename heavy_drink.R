@@ -100,12 +100,6 @@ indx
 df_drink[is.na(df_drink)] <- 0
 df_drink_test[is.na(df_drink_test)] <- 0
 
-#delete index column
-df_drink <- df_drink[-1]
-df_drink_test <-df_drink_test[-1]
-df_drink <- df_drink[-1]
-df_drink_test <-df_drink_test[-1]
-length(df_drink[,1])
 
 #rename label
 colnames(df_drink)[colnames(df_drink) == "label.first"] <- "label"
@@ -123,10 +117,10 @@ rows <- sample(nrow(df_drink))
 train_df =df_drink[rows,]
 
 #feature selection
-importance_mean = features_importance(train_df[seq(1,length(train_df), length(train_df)/10000)], "label")
+importance_mean = features_importance(train_df[seq(1,33000, 10),], "label")
 importance_mean
 length(importance_mean[,1])
-df_drink_filtered = select_features(train_df,importance_mean, length(importance_mean[,1]), "label")
+df_drink_filtered = select_features(train_df,importance_mean, 5, "label")
 
 #df_stress <- df_stress[-11]
 #df_stress_test <- df_stress_test[-11]
@@ -157,7 +151,7 @@ plot(custom)
 custom
 #############################################
 #Random Forest
-rf_classifier = randomForest(label ~ ., data = train_df, mtry=4, ntree=200)
+rf_classifier = randomForest(label ~ ., data = df_drink_filtered, mtry=4, ntree=200)
 
 #Prediction
 prediction = predict(rf_classifier, train_df)
@@ -174,7 +168,7 @@ cm <- caret::confusionMatrix(prediction, df_drink_test$label, mode="prec_recall"
 obj = tune.svm(label ~ ., data=train_df, kernel='radial',type="C-classification", cost=seq(from=0.1, to=1,by=0.1), gamma = seq(from=0.1, to =1, by=0.1))
 obj
 
-svm_classifier = svm(label ~ ., data=train_df, kernel="radial", type="C-classification", gamma =0.3, cost=0.9, scale=TRUE )
+svm_classifier = svm(label ~ ., data=df_drink_filtered, kernel="radial", type="C-classification", gamma =0.3, cost=0.9, scale=TRUE )
 #svm_classifier$SV
 
 plot(svm_classifier, train_df, eda.sd ~ X.sd)
