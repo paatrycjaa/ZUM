@@ -1,3 +1,7 @@
+# Advanced machine learning
+# Authors: Patrycja Cieplicka, Pawel Zakieta
+
+#Heavy drinking classification
 library(randomForest)
 library(caret)
 library(tidyverse)
@@ -6,7 +10,7 @@ library(e1071)
 library(mlbench)
 
 
-if(!exists("vectorize", mode="function")) source("vectorize.R")
+source("features.R")
 
 #Load train data - 12 people
 subwindow = TRUE
@@ -106,7 +110,6 @@ colnames(df_drink)[colnames(df_drink) == "label.first"] <- "label"
 colnames(df_drink_test)[colnames(df_drink_test) == "label.first"] <- "label"
 colnames(df_drink)[colnames(df_drink) == "label.first.first"] <- "label"
 colnames(df_drink_test)[colnames(df_drink_test) == "label.first.first"] <- "label"
-#View(df_drink)
 
 #shuffle data
 #label to factor
@@ -122,10 +125,9 @@ importance_mean
 length(importance_mean[,1])
 df_drink_filtered = select_features(train_df,importance_mean, 5, "label")
 
-#df_stress <- df_stress[-11]
-#df_stress_test <- df_stress_test[-11]
+
 ###############
-#k-fold cross validation
+#k-fold cross validation to get parameters for Random Forest
 
 customRF <- list(type = "Classification", library = "randomForest", loop = NULL)
 customRF$parameters <- data.frame(parameter = c("mtry", "ntree"), class = rep("numeric", 2), label = c("mtry", "ntree"))
@@ -151,31 +153,24 @@ plot(custom)
 custom
 #############################################
 #Random Forest
+#Train
 rf_classifier = randomForest(label ~ ., data = df_drink_filtered, mtry=4, ntree=200)
-
-#Prediction
-prediction = predict(rf_classifier, train_df)
-cm <- caret::confusionMatrix(prediction, train_df$label, mode="prec_recall")
-cm
 
 prediction = predict(rf_classifier, df_drink_test)
 cm <- caret::confusionMatrix(prediction, df_drink_test$label, mode="prec_recall")
 
-#mtry = 2; ntree= 200;
+
 #############################################
 #SVM
-## 10-fold cross validation
+## 10-fold cross validation to get parameters
 obj = tune.svm(label ~ ., data=train_df, kernel='radial',type="C-classification", cost=seq(from=0.1, to=1,by=0.1), gamma = seq(from=0.1, to =1, by=0.1))
 obj
 
+#Train
 svm_classifier = svm(label ~ ., data=df_drink_filtered, kernel="radial", type="C-classification", gamma =0.3, cost=0.9, scale=TRUE )
-#svm_classifier$SV
-
-plot(svm_classifier, train_df, eda.sd ~ X.sd)
 
 #Prediction
 prediction = predict(svm_classifier, df_drink_test)
-#prediction
 
 cm <- caret::confusionMatrix(prediction, df_drink_test$label, mode="prec_recall")
 cm

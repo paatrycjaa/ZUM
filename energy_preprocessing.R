@@ -1,3 +1,6 @@
+# Advanced machine learning
+# Authors: Patrycja Cieplicka, Pawel Zakieta
+
 library(tidyverse)
 library(randomForest)
 library(caret)

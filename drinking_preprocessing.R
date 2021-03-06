@@ -1,6 +1,7 @@
+# Advanced machine learning
+# Authors: Patrycja Cieplicka, Pawel Zakieta
+
 #Load data for heavy drinking detection
-#jesli odczyt z telefonu jest pomiedzy odczytami i i i+1 tac, to label przyjmuje wartosc tac i/ timestamp w milisekundach w pid? w target w sek?
-#https://github.com/p-nath/detection_heavy__drinking_episodes/blob/master/report.pdf
 library(tsvectorization)
 library(tidyverse)
 library(reticulate)

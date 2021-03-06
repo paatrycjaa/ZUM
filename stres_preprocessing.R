@@ -1,12 +1,13 @@
+# Advanced machine learning
+# Authors: Patrycja Cieplicka, Pawel Zakieta
+
 library(tidyverse)
 library(reticulate)
 py_install("pandas")
 library(randomForest)
 library(caret)
-
-
-source("vectorize.R")
-
+library(chron)
+library(tsvectorization)
 
 
 results = c()
@@ -52,54 +53,7 @@ for (file_index in file_indices){
   #Filter only labels - baseline, stress, amusement
   data <- as.data.frame(df)
   data_filtered <- data %>% filter(label == "1" | label == "2" | label == "3")
-  #View(data_filtered)
-  
-  # splited_data = split_dataframe(data_filtered, "time")
-  
-  #Load only 10000 rows 
-  data_filtered_2000 = sample_n(data_filtered,10000)
-  data_filtered_2000 = select(data_filtered_2000, -time)
-  data_filtered_2000$label = factor(data_filtered_2000$label)
-  
-  #fucntion returning the features importance
-  features_importance <- function(df, label){
-    columnName <- label
-    modelFormula <- paste(columnName, " ~ .")
-    
-    rf_classifier = randomForest(as.formula(modelFormula), data = df, importance = TRUE)
-    
-    features_value = as.data.frame(importance(rf_classifier, type=1))
-    features_value = rownames_to_column(features_value)
-    colnames(features_value) <- c("col", "importance")
-    features_value <- features_value %>% arrange(desc(importance))
-    
-    return(features_value)
-  }
-  
-  #function returning dataframe with n the most important value
-  select_features <- function(df,features_value, number_of_features, label){
-    
-    features_value_selected = head(features_value, number_of_features)
-    selected_features = factor(features_value_selected$col)
-    df_selected = select(df, all_of(selected_features), all_of(label))
-    
-    return(df_selected)
-  }
-  
-  # df_values = features_importance(data_filtered_2000, "label")
-  # df_values
-  # col importance
-  # 1         eda  32.805243
-  # 2 temperature  30.823612
-  # 3           Z  25.861652
-  # 4           X  21.015242
-  # 5        resp   9.087094
-  # 6           Y   8.477424
-  # 7         ecg   3.498709
-  # 8         emg   3.086955
-  
-  # select_features(data_filtered_2000,df_values, 3, "label")
-  
+
   
   get_intervals <- function(signal, threshold=0.3){
     above_threshold = signal>threshold
